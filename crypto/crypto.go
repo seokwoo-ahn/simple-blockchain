@@ -29,3 +29,11 @@ func Keccak256(data ...[]byte) []byte {
 func NewKeccakState() KeccakState {
 	return sha3.NewLegacyKeccak256().(KeccakState)
 }
+
+func Keccak512(data ...[]byte) []byte {
+	d := sha3.NewLegacyKeccak512()
+	for _, b := range data {
+		d.Write(b)
+	}
+	return d.Sum(nil)
+}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	"simple-blockchain/core/types"
 )
 
 func TestMining(t *testing.T) {
@@ -12,7 +12,7 @@ func TestMining(t *testing.T) {
 	abort := make(chan struct{})
 	found := make(chan *types.Block, 10)
 
-	block := types.NewBlock(header, nil, nil, nil, nil)
+	block := types.NewBlock(header, nil)
 	Mine(block, uint64(0), abort, found)
 
 	fmt.Println(<-found)

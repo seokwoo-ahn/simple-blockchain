@@ -7,7 +7,7 @@ import (
 
 	"simple-blockchain/crypto"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	"simple-blockchain/core/types"
 )
 
 // two256 is a big integer representing 2^256

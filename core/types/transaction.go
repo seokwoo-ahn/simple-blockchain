@@ -17,7 +17,7 @@ type Transaction struct {
 	// caches
 	hash atomic.Value
 	// size atomic.Value
-	// from atomic.Value
+	from atomic.Value
 }
 
 // TxData is the underlying data of a transaction.
@@ -52,5 +52,16 @@ func (tx *Transaction) Hash() common.Hash {
 
 	var h common.Hash
 	tx.hash.Store(h)
+	return h
+}
+
+// From returns the transaction from.
+func (tx *Transaction) From() common.Address {
+	if from := tx.from.Load(); from != nil {
+		return from.(common.Address)
+	}
+
+	var h common.Address
+	tx.from.Store(h)
 	return h
 }

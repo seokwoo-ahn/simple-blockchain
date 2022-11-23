@@ -66,3 +66,7 @@ func (tx *Transaction) setDecoded(inner TxData, size int) {
 		tx.size.Store(common.StorageSize(size))
 	}
 }
+
+func (tx *Transaction) TxData() TxData { return tx.inner }
+
+func (tx *Transaction) TxTime() time.Time { return tx.time }

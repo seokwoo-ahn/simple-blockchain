@@ -1,11 +1,13 @@
 package types
 
 import (
+	"encoding/json"
 	"math/big"
 	"sync/atomic"
 	"time"
 
 	"simple-blockchain/common"
+	"simple-blockchain/crypto"
 )
 
 // Transactions implements DerivableList for transactions.
@@ -38,13 +40,28 @@ type TxData struct {
 
 // Hash returns the transaction hash.
 func (tx *Transaction) Hash() common.Hash {
+	var h common.Hash
 	if hash := tx.hash.Load(); hash != nil {
 		return hash.(common.Hash)
 	}
-
-	var h common.Hash
+	hasher := crypto.NewKeccakState()
+	val := tx.Encode()
+	hasher.Write([]byte(val))
+	hasher.Sum(h[:0])
 	tx.hash.Store(h)
 	return h
+}
+
+func (tx *Transaction) Encode() string {
+	var encoded string
+	txData := tx.TxData()
+	if temp, err := json.Marshal(txData); err != nil {
+		panic(err)
+	} else {
+		encoded = encoded + string(temp)
+	}
+	encoded = encoded + tx.TxTime().String()
+	return encoded
 }
 
 // From returns the transaction from.

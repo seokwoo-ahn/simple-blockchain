@@ -9,7 +9,7 @@ import (
 	"simple-blockchain/core/types"
 )
 
-func SampleHeader() *types.Header {
+func sampleHeader() *types.Header {
 	header := types.Header{
 		ParentHash: common.BytesToHash([]byte("Parent")),
 		TxHash:     common.BytesToHash([]byte("txhash")),
@@ -22,6 +22,6 @@ func SampleHeader() *types.Header {
 }
 
 func TestSealHash(t *testing.T) {
-	header := SampleHeader()
+	header := sampleHeader()
 	fmt.Println(SealHash(header))
 }

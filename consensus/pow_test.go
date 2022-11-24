@@ -8,7 +8,7 @@ import (
 )
 
 func TestMining(t *testing.T) {
-	header := SampleHeader()
+	header := sampleHeader()
 	abort := make(chan struct{})
 	found := make(chan *types.Block, 10)
 

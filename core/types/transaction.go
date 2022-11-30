@@ -64,8 +64,25 @@ func (tx *Transaction) Encode() string {
 	return encoded
 }
 
+func (txs *Transactions) Encode() string {
+	var encoded string
+	for _, v := range *txs {
+		encoded = encoded + v.Encode()
+	}
+	return encoded
+}
+
+func (txs Transactions) Hash() common.Hash {
+	var h common.Hash
+	hasher := crypto.NewKeccakState()
+	val := txs.Encode()
+	hasher.Write([]byte(val))
+	hasher.Sum(h[:0])
+	return h
+}
+
 // From returns the transaction from.
-func (tx *Transaction) From() common.Address {
+func (tx Transaction) From() common.Address {
 	if from := tx.from.Load(); from != nil {
 		return from.(common.Address)
 	}
@@ -84,6 +101,5 @@ func (tx *Transaction) setDecoded(inner TxData, size int) {
 	}
 }
 
-func (tx *Transaction) TxData() TxData { return tx.inner }
-
+func (tx *Transaction) TxData() TxData    { return tx.inner }
 func (tx *Transaction) TxTime() time.Time { return tx.time }

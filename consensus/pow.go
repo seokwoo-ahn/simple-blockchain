@@ -35,7 +35,6 @@ search:
 		result := hashimoto(hash, nonce)
 		if powBuffer.SetBytes(result).Cmp(target) <= 0 {
 			// Correct nonce found, create a new header with it
-			header = types.CopyHeader(header)
 			header.Nonce = types.EncodeNonce(nonce)
 
 			// Seal and return a block (if still needed)

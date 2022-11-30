@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	EmptyRootHash = common.HexToHash("56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421")
+	EmptyRootHash = common.BytesToHash([]byte("simple-blockchain"))
 )
 
 // A BlockNonce is a 64-bit hash which proves (combined with the
@@ -61,34 +61,21 @@ type Block struct {
 // The values of TxHash, UncleHash, ReceiptHash and Bloom in header
 // are ignored and set to values derived from the given txs, uncles
 // and receipts.
-func NewBlock(header *Header, txs []*Transaction) *Block {
-	b := &Block{header: CopyHeader(header), td: new(big.Int)}
+func NewBlock(header *Header, txs Transactions) *Block {
+	b := &Block{header: header, td: new(big.Int)}
 
 	if len(txs) == 0 {
 		b.header.TxHash = EmptyRootHash
+	} else {
+		b.header.TxHash = txs.Hash()
+		b.transactions = make(Transactions, len(txs))
+		copy(b.transactions, txs)
 	}
-	// TODO txhash
-	// b.header.TxHash = DeriveSha(Transactions(txs), hasher)
-	// b.transactions = make(Transactions, len(txs))
-	// copy(b.transactions, txs)
 
 	return b
 }
 
-// CopyHeader creates a deep copy of a block header to prevent side effects from
-// modifying a header variable.
-func CopyHeader(h *Header) *Header {
-	cpy := *h
-	if cpy.Difficulty = new(big.Int); h.Difficulty != nil {
-		cpy.Difficulty.Set(h.Difficulty)
-	}
-	if cpy.Number = new(big.Int); h.Number != nil {
-		cpy.Number.Set(h.Number)
-	}
-	return &cpy
-}
-
-func (b *Block) Header() *Header            { return CopyHeader(b.header) }
+func (b *Block) Header() *Header            { return b.header }
 func (b *Block) Transactions() Transactions { return b.transactions }
 
 // Hash returns the block hash of the header, which is simply the keccak256 hash of its

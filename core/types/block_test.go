@@ -49,4 +49,5 @@ func TestGenBlock(t *testing.T) {
 
 	block := NewBlock(header, txs)
 	fmt.Println(block)
+	fmt.Println(block.header)
 }

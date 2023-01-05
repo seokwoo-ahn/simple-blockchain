@@ -6,7 +6,8 @@ import (
 )
 
 type Config struct {
-	Port int
+	HttpListenPort int
+	HttpDialPort   int
 }
 
 func NewConfig(file string) *Config {

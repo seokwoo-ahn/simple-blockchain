@@ -2,10 +2,8 @@ package node
 
 import (
 	"fmt"
-	"io"
-	"net"
-	"strconv"
-	"time"
+	"simple-blockchain/p2p"
+	"sync"
 )
 
 type Node struct {
@@ -25,51 +23,20 @@ func New(config *Config) (*Node, error) {
 }
 
 func (n *Node) Start() {
-	listenPort := ":" + strconv.Itoa(n.httpListenPort)
-	dialPort := ":" + strconv.Itoa(n.httpDialPort)
+	var wg sync.WaitGroup
+	wg.Add(1)
 
-	var l net.Listener
-	var d net.Conn
-
-	l, err := net.Listen("tcp", listenPort)
-	if nil != err {
-		panic(err)
-	}
-	for {
-		d, err = net.Dial("tcp", dialPort)
-		if nil == err {
-			fmt.Println("connect complete!!")
-			break
-		}
-		time.Sleep(3 * time.Second)
-		fmt.Println("try dial")
+	p2pConfig := &p2p.Config{
+		HttpListenPort: n.httpListenPort,
+		HttpDialPort:   n.httpDialPort,
 	}
 
-	var conn net.Conn
-	defer conn.Close()
-	for {
-		conn, err = l.Accept()
-		if err != nil {
-			continue
-		}
-		d.Write([]byte("hello!!"))
-		go ConnHandler(conn)
-	}
-}
+	server, _ := p2p.NewServer(p2pConfig)
+	client, _ := p2p.NewClient(p2pConfig)
+	client.Wg = &wg
 
-func ConnHandler(conn net.Conn) {
-	recvBuf := make([]byte, 4096)
-	for {
-		n, err := conn.Read(recvBuf)
-		if nil != err {
-			if io.EOF == err {
-				return
-			}
-			return
-		}
-		if 0 < n {
-			data := recvBuf[:n]
-			fmt.Println("data received!!", data)
-		}
-	}
+	go server.Start()
+	go client.Start()
+
+	wg.Wait()
 }

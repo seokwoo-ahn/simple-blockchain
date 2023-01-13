@@ -24,7 +24,7 @@ func New(config *Config) (*Node, error) {
 
 func (n *Node) Start() {
 	var wg sync.WaitGroup
-	wg.Add(1)
+	wg.Add(2)
 
 	p2pConfig := &p2p.Config{
 		HttpListenPort: n.httpListenPort,
